@@ -3,9 +3,7 @@
 #include <iostream>
 #include <cmath>
 #include "shader.h"
-#include "Circle.h"
-#include "Cylinder.h"
-#include "Sphere.h"
+#include "Drawer.h"
 
 const int windowHeight = 600;
 const int windowWidth = 600;
@@ -17,6 +15,7 @@ float lastY;
 bool firstMouse = true;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
+Drawer drawer(verticesCount);
 
 void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
@@ -56,7 +55,6 @@ int main() {
   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  
 
   Shader commonShader("../shaders/shader.vs", "../shaders/shader.fs");
-  Sphere sphere(40, 40);
 
   // adding matrices
   glm::mat4 model(1.0f);
@@ -80,7 +78,7 @@ int main() {
     glClearColor(0.2f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    sphere.Draw();
+    drawer.Draw();
 
     glfwSwapBuffers(window);
     glfwPollEvents();
@@ -96,21 +94,32 @@ void framebufferSizeCallback(GLFWwindow* window, int width, int height) {
 }
 
 void processInput(GLFWwindow* window) {
-  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-    glfwSetWindowShouldClose(window, true);
-  }
   float currentFrame = glfwGetTime();
   deltaTime = currentFrame - lastFrame;
   lastFrame = currentFrame; 
   const float cameraSpeed = 2.5f * deltaTime;
-  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+
+  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+    glfwSetWindowShouldClose(window, true);
+  }
+  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
     cameraPos += cameraSpeed * cameraFront;
-  if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+  }
+  if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
     cameraPos -= cameraSpeed * cameraFront;
-  if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+  }
+  if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
     cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+  }
+  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
     cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+  }
+  if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS) {
+    drawer.SwitchFigure(SHAPE_TYPES::SPHERE);
+  }
+  if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS) {
+    drawer.SwitchFigure(SHAPE_TYPES::CYLINDER);
+  }
 }
 
 void mouseCallback(GLFWwindow* window, double xpos, double ypos) {

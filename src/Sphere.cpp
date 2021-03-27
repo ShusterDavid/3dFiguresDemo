@@ -1,17 +1,15 @@
 #include <cmath>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
 #include "Sphere.h"
 
-Sphere::Sphere(int verticalSectors, int horizontalSectors) : verticalCount(verticalSectors), horizontalCount(horizontalSectors) {
-  std::vector<VertexWithNormal> unitVertices = generateUnitVectors();
+Sphere::Sphere(int newSectorsCount) : CircleSymmetricFigure(newSectorsCount) {
+  std::vector<VertexWithNormal> unitVertices = generateCircleUnitVectors();
 
   const float PI = 3.1415926f;
-  float sectorStep = PI / verticalCount;
+  float sectorStep = PI / sectorsCount;
 
   // generate side vertices
   float angle;
-  for(int i = 1; i < verticalCount - 1; i++) {
+  for(int i = 1; i < sectorsCount - 1; i++) {
     angle = i * sectorStep;
     float z = std::cos(angle);
     float plain = std::sin(angle);
@@ -70,7 +68,7 @@ Sphere::Sphere(int verticalSectors, int horizontalSectors) : verticalCount(verti
   unsigned int bottomIndex = 0;
   unsigned int topIndex = unitVertices.size();
 
-  for(int i = 1; i < verticalCount - 1; i++) {
+  for(int i = 1; i < sectorsCount - 1; i++) {
     float botStart = bottomIndex;
     float topStart = topIndex;
 
@@ -124,49 +122,5 @@ Sphere::Sphere(int verticalSectors, int horizontalSectors) : verticalCount(verti
     }
   }
 
-  glGenVertexArrays(1, &VAO);
-  glGenBuffers(1, &VBO);
-  glGenBuffers(1, &EBO);
-  
-  glBindVertexArray(VAO);
-
-  glBindBuffer(GL_ARRAY_BUFFER, VBO);
-  glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(VertexWithNormal), &vertices[0], GL_STATIC_DRAW);  
-
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
-
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VertexWithNormal), (void*)0);
-  glEnableVertexAttribArray(0);
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(VertexWithNormal), (void*)(3 * sizeof(float)));
-  glEnableVertexAttribArray(1);
-  
-  glBindVertexArray(0);
-}
-
-std::vector<VertexWithNormal> Sphere::generateUnitVectors() {
-  const float PI = 3.1415926f;
-  float sectorStep = 2 * PI / horizontalCount;
-
-  float angle;
-  std::vector<VertexWithNormal> result;
-
-  for(int i = 0; i < horizontalCount; i++) {
-    angle = i * sectorStep;
-    VertexWithNormal v;
-
-    v.x = std::cos(angle);
-    v.y = std::sin(angle);
-    v.z = 0;
-
-    result.push_back(v);
-  }
-
-  return result;
-}
-
-void Sphere::Draw() {
-  glBindVertexArray(VAO);
-  glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
-  glBindVertexArray(0);
+  linkVAO();
 }
