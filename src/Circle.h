@@ -1,11 +1,6 @@
 #pragma once
 #include <vector>
-
-struct Vertex {
-  float x;
-  float y;
-  float z;
-};
+#include "Vertex.h"
 
 class Circle {
   public:

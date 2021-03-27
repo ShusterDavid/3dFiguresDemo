@@ -5,6 +5,7 @@
 #include "shader.h"
 #include "Circle.h"
 #include "Cylinder.h"
+#include "Sphere.h"
 
 const int windowHeight = 600;
 const int windowWidth = 600;
@@ -55,7 +56,7 @@ int main() {
   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  
 
   Shader commonShader("../shaders/shader.vs", "../shaders/shader.fs");
-  Cylinder cylinder(verticesCount);
+  Sphere sphere(40, 40);
 
   // adding matrices
   glm::mat4 model(1.0f);
@@ -79,7 +80,7 @@ int main() {
     glClearColor(0.2f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    cylinder.Draw();
+    sphere.Draw();
 
     glfwSwapBuffers(window);
     glfwPollEvents();
